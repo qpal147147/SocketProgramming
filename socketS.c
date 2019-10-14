@@ -19,7 +19,7 @@ int main(){
         serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
         serv_addr.sin_port = htons(portNo);
 
-        if(bind(servfd,(struct sockaddr*)&serv_addr.sizeof(serv_addr)) >= 0){
+        if(bind(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) >= 0){
             listen(servfd,1);
             clifd = accept(servfd,(struct sockaddr*)&serv_addr,&serv_addr);
             while(1){
