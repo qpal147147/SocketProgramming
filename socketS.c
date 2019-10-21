@@ -9,7 +9,7 @@
 int main(){
     int servfd,portNo=6666,clifd;
     int clientLen;
-    char recBuffer[256];
+    char recBuffer[256], sendBuff[]={"Thank You!"};
     struct sockaddr_in serv_addr,cli_addr;
     int n;
 
@@ -24,7 +24,10 @@ int main(){
             clifd = accept(servfd,(struct sockaddr*)&serv_addr,&serv_addr);
             while(1){
                 bzero(recBuffer,256);
-                if((n =read(clifd,recBuffer,256)) > 0)printf("Messenge:%s\n",recBuffer);
+                if((n =read(clifd,recBuffer,256)) > 0){
+  		    printf("Messenge:%s\n",recBuffer);
+		    n = write(clifd,sendBuff,strlen(sendBuff));
+		}
             }
         }
     }
