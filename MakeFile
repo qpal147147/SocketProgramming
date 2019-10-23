@@ -1,0 +1,2 @@
+gcc socketC.c -o socketC
+gcc socketS.c -o socketS
