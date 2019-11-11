@@ -9,7 +9,7 @@
 int main(){
     int servfd,portNo=6666,clifd;
     int clientLen;
-    char recBuffer[256]={0}, sendBuff[]={"Thank You!\nYou will get the same response"};
+    char recBuffer[256]={0}, sendBuff[]={"Thank You!"};
     struct sockaddr_in serv_addr,cli_addr;
     int n;
     servfd = socket(AF_INET,SOCK_STREAM,0);
@@ -30,12 +30,9 @@ int main(){
                 if((n =read(clifd,recBuffer,sizeof(recBuffer))) > 0){
 				printf("Messenge:%s\n",recBuffer);
   		    		
-					if(strstr(recBuffer,"/FILE [")!=NULL){
-						char *fileName = strchr(recBuffer,'[') + 1;
-						strtok(fileName,"]");
-						
+					if(strncmp(recBuffer,"/FILE",5)==0){
 						printf("recv file ommand start\n");
-						FILE *fp = fopen(strcat(fileName,"Copy"),"w");
+						FILE *fp = fopen("recv.txt","w");
 						int rByte = 0;
 							
 						while((rByte = read(clifd,recBuffer,sizeof(recBuffer)))>0){
