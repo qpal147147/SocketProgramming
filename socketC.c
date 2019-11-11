@@ -18,14 +18,14 @@ int main(int argc,char *argv[]){
     int n;
 
     //print ipPort & refence
-    //for(int i = 0;i<argc;i++){
-    //    printf("arg:%d argv:%s\n",argc,argv[i]);
-    //}
+    for(int i = 0;i<argc;i++){
+        printf("arg:%d argv:%s\n",argc,argv[i]);
+    }
 
     //set ipPort
-    //if(argc>=2){
-    //    portNo = atoi(argv[2]);
-    //}
+    if(argc>=2){
+        portNo = atoi(argv[2]);
+    }
 
     servfd = socket(AF_INET,SOCK_STREAM,0);
     int flag = 1;
@@ -33,12 +33,12 @@ int main(int argc,char *argv[]){
 	
     if(servfd >=0){
         serv_addr.sin_family = AF_INET;
-        serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+        serv_addr.sin_addr.s_addr = inet_addr("10.0.0.1");
         
-		//if(argc >=2){
-		//	serv = gethostbyname(argv[1]);
-		//	bcopy((char *)serv->h_addr,(char *)&serv_addr.sin_addr.s_addr,serv->h_length);
-		//}
+		if(argc >=2){
+			serv = gethostbyname(argv[1]);
+			bcopy((char *)serv->h_addr,(char *)&serv_addr.sin_addr.s_addr,serv->h_length);
+		}
 		
 		serv_addr.sin_port = htons(portNo);
 
@@ -48,17 +48,14 @@ int main(int argc,char *argv[]){
 				bzero(sendBuffer,256);
 				fgets(sendBuffer,256,stdin);
 				
-				// /FILE [fileName]
-				if(strstr(sendBuffer,"/FILE [")!=NULL){
-					char *fileName = strchr(sendBuffer,'[') + 1;
-					strtok(fileName,"]");
-						
+				
+				if(strncmp(sendBuffer,"/FILE",5)==0){
 					printf("Send file command start\n");
 					n = write(servfd,sendBuffer,strlen(sendBuffer));
 						
 					for(int i = 0;i<100000000;i++);
 						
-					FILE *fp = fopen(fileName,"r");
+					FILE *fp = fopen("hello","r");
 					int rByte = 0;
 					char fileBuffer[256] = {0};
 						
