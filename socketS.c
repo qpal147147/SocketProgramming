@@ -9,9 +9,16 @@
 int main(){
     int servfd,portNo=6666,clifd;
     int clientLen;
-    char recBuffer[256]={0}, sendBuff[]={"Thank You!"};
+    char recBuffer[256]={0}, sendBuffer[]={"Thank You!"};
     struct sockaddr_in serv_addr,cli_addr;
     int n;
+    
+    //chat
+    int fdmax = -1,retval = 0;
+    fd_set tmpSet,master;
+    FD_ZERO(&tmpSet);
+    FD_ZERO(&master);
+    
     servfd = socket(AF_INET,SOCK_STREAM,0);
 
     if(servfd >= 0){
@@ -20,9 +27,35 @@ int main(){
         serv_addr.sin_port = htons(portNo);
 
         if(bind(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) >= 0){
-            listen(servfd,1);
+            listen(servfd,5);
+            FD_SET(servfd,&master);
+            fdmax = servfd;
+            
+            printf("Server start listening!\n");
+            
+            //server main block
+            while(1){
+            	tmpSet = master;
+            	retval = select(fdmax+1,&tmpSet,NULL,NULL,NULL);
+            	
+            	if(retval == 0){
+            		continue;
+            	}
+            	else if(retval == -1){
+            		printf("Select error!");
+            	}
+            	else{
+            		
+            	}
+            }
+            /*
 			clientLen = sizeof(cli_addr);
             clifd = accept(servfd,(struct sockaddr*)&cli_addr,&clientLen);
+            
+            //test ID multiplex
+            scanf("%s",sendBuffer);
+            printf("send Message:%s\n",sendBuffer);
+            n = write(clifd,sendBuffer,strlen(sendBuffer));
             
             while(1){
                 bzero(recBuffer,sizeof(recBuffer));
@@ -54,10 +87,10 @@ int main(){
 				
 					}
 					else{
-						n = write(clifd,sendBuff,strlen(sendBuff));
+						n = write(clifd,sendBuffer,strlen(sendBuffer));
 					}
 				}
-			}
+			}*/
 		}
     }
 }
