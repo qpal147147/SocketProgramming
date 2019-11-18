@@ -15,6 +15,9 @@ int main(int argc,char *argv[]){
     char sendBuffer[256],recBuffer[256];
     struct sockaddr_in serv_addr;
     struct hostent *serv;
+    fd_set read_fds;
+    int fdmax = -1;
+    int retval = 0;
     int n;
 
     //print ipPort & refence
@@ -44,41 +47,56 @@ int main(int argc,char *argv[]){
 
 		if(connect(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) >=0){
 			while(1){
-				printf("Enter Messenge:");
-				bzero(sendBuffer,256);
-				fgets(sendBuffer,256,stdin);
-				
-				
-				if(strncmp(sendBuffer,"/FILE",5)==0){
-					printf("Send file command start\n");
-					n = write(servfd,sendBuffer,strlen(sendBuffer));
-						
-					for(int i = 0;i<100000000;i++);
-						
-					FILE *fp = fopen("hello","r");
-					int rByte = 0;
-					char fileBuffer[256] = {0};
-						
-					while((rByte = fread(fileBuffer,1,sizeof(fileBuffer),fp))>0){
-						n = write(servfd,fileBuffer,strlen(fileBuffer));
-						bzero(fileBuffer,sizeof(fileBuffer));
-					}
-						
-					for(int i = 0;i<100000000;i++);
-						
-					char EOFBuffer[] = {EOF};
-					write(servfd,EOFBuffer,sizeof(EOFBuffer));
-					fclose(fp);
-					printf("Send file command end\n");
+				FD_ZERO(&read_fds);
+				FD_SET(0,&read_fds);
+				fdmax = 0;
+				FD_SET(servfd,&read_fds);
+				fdmax = servfd;
+				retval = select(fdmax+1,&read_fds,NULL,NULL,NULL);
+				if(retval == 0){
+					continue;
 				}
 				else{
-					n = write(servfd,sendBuffer,strlen(sendBuffer));
-					printf("Send Messenge(%d):%s\n",n,sendBuffer);
-				}
+					if(FD_ISSET(servfd,&read_fds)){
+						bzero(recBuffer,sizeof(recBuffer));
+						if((n=read(servfd,recBuffer,sizeof(recBuffer)))>0){
+							printf("\nRecv Message(%d):%s\n",n,recBuffer);
+						}
+					}
+					if(FD_ISSET(0,&read_fds)){
+						//printf("Enter Messenge:");
+						bzero(sendBuffer,256);
+						fgets(sendBuffer,256,stdin);
+						
+						if(strncmp(sendBuffer,"/FILE",5)==0){
+							printf("Send file command start\n");
+							n = write(servfd,sendBuffer,strlen(sendBuffer));
+						
+							for(int i = 0;i<100000000;i++);
+						
+							FILE *fp = fopen("hello","r");
+							int rByte = 0;
+							char fileBuffer[256] = {0};
+						
+							while((rByte = fread(fileBuffer,1,sizeof(fileBuffer),fp))>0){
+								n = write(servfd,fileBuffer,strlen(fileBuffer));
+								bzero(fileBuffer,sizeof(fileBuffer));
+							}
+						
+							for(int i = 0;i<100000000;i++);
+						
+							char EOFBuffer[] = {EOF};
+							write(servfd,EOFBuffer,sizeof(EOFBuffer));
+							fclose(fp);
+							printf("Send file command end\n");
+						}
+						else{
+							n = write(servfd,sendBuffer,strlen(sendBuffer));
+							printf("Send Messenge(%d):%s\n",n,sendBuffer);
+						}
 					
-				bzero(recBuffer,sizeof(recBuffer));
-				if((n =read(servfd,sendBuffer,256)) > 0){
-					printf("Recv Messenge(%d):%s\n",n,sendBuffer);
+						bzero(recBuffer,sizeof(recBuffer));
+					}
 				}
 			}
 		}
