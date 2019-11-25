@@ -7,7 +7,7 @@
 #include<netinet/in.h>
 
 int main(){
-    int servfd,portNo=6666,clifd;
+    int servfd,portNo=7777,clifd;
     int clientLen;
     char recBuffer[256]={0}, sendBuffer[]={"Thank You!"};
     struct sockaddr_in serv_addr,cli_addr;
@@ -45,53 +45,52 @@ int main(){
             		printf("Select error!");
             	}
             	else{
-            		
+            		for(int i = 0;i<=fdmax;i++){
+            			if(FD_ISSET(i,&tmpSet)){
+            				if(i == servfd){
+            					clientLen = sizeof(cli_addr);
+            					clifd = accept(servfd,(struct sockaddr*)&cli_addr,&clientLen);
+            					if(clifd != -1){
+            						FD_SET(clifd,&master);
+            						if(clifd > fdmax) fdmax = clifd;
+            						printf("NO[%d] is online!\n",clifd);
+            						/* and then broadcast this news */
+            					}
+            				}
+            				else{ //client say something or disconnection
+            					if((n=read(i,recBuffer,sizeof(recBuffer))) <= 0){
+            						if(n <= 0){
+            							printf("NO[%d] leave!\n",i);
+            							/* and then broadcast this news */
+            						}
+            						
+            						close(i);
+            						FD_CLR(i,&master);
+            					}
+            					else{
+            						fd_set broSet = master;
+            						for(int j = 0;j<=fdmax;j++){
+            							if(FD_ISSET(j,&broSet)){
+            								if(j!=servfd && j != i){
+            									char writeBuff[256] = {0};
+            									snprintf(writeBuff,sizeof(writeBuff), " No[%d]: %s",
+            									i, recBuffer);
+            									write(j,writeBuff,strlen(writeBuff));
+            									
+            								}
+            							}
+            						}
+            					}
+            					
+            					bzero(recBuffer,sizeof(recBuffer));
+            				}
+            			}
+            		}
             	}
             }
-            /*
-			clientLen = sizeof(cli_addr);
-            clifd = accept(servfd,(struct sockaddr*)&cli_addr,&clientLen);
-            
-            //test ID multiplex
-            scanf("%s",sendBuffer);
-            printf("send Message:%s\n",sendBuffer);
-            n = write(clifd,sendBuffer,strlen(sendBuffer));
-            
-            while(1){
-                bzero(recBuffer,sizeof(recBuffer));
-                
-                if((n =read(clifd,recBuffer,sizeof(recBuffer))) > 0){
-				printf("Messenge:%s\n",recBuffer);
-  		    		
-					if(strncmp(recBuffer,"/FILE",5)==0){
-						printf("recv file ommand start\n");
-						FILE *fp = fopen("recv.txt","w");
-						int rByte = 0;
-							
-						while((rByte = read(clifd,recBuffer,sizeof(recBuffer)))>0){
-							char EOFBuffer[] = {EOF};
-										
-							if(strncmp(recBuffer,EOFBuffer,1)==0){
-							break;
-							}
-									
-							printf("file:%s\n",recBuffer);
-							fwrite(recBuffer,strlen(recBuffer),1,fp);
-							bzero(recBuffer,sizeof(recBuffer));
-						}
-						fclose(fp);
-							
-						char fileEnd[] = {"File End"};
-						n = write(clifd,fileEnd,strlen(fileEnd));
-						printf("recv file command end\n");
-				
-					}
-					else{
-						n = write(clifd,sendBuffer,strlen(sendBuffer));
-					}
-				}
-			}*/
 		}
+		close(clifd);
     }
+	return 0;
 }
 
