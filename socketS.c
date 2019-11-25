@@ -73,8 +73,7 @@ int main(){
             							if(FD_ISSET(j,&broSet)){
             								if(j!=servfd && j != i){
             									char writeBuff[256] = {0};
-            									snprintf(writeBuff,sizeof(writeBuff), " No[%d]: %s",
-            									i, recBuffer);
+            									snprintf(writeBuff,sizeof(writeBuff), " No[%d]: %s", i, recBuffer);
             									write(j,writeBuff,strlen(writeBuff));
             									
             								}
