@@ -5,6 +5,7 @@
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<netinet/in.h>
+#include<stdbool.h>
 typedef struct{
 	int id;
 	char name[20];
