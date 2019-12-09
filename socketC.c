@@ -68,26 +68,61 @@ int main(int argc, char *argv[]) {
 						fgets(sendBuffer, 256, stdin);
 
 						if (strncmp(sendBuffer, "/FILE", 5) == 0) {
-							printf("Send file command start\n");
-							n = write(servfd, sendBuffer, strlen(sendBuffer));
-
-							for (int i = 0; i<100000000; i++);
-
+							//first command
 							FILE *fp = fopen("hello", "r");
-							int rByte = 0;
-							char fileBuffer[256] = { 0 };
+							if(fp != NULL){
+								printf("Send file command start\n");
+								n = write(servfd, sendBuffer, strlen(sendBuffer));
 
-							while ((rByte = fread(fileBuffer, 1, sizeof(fileBuffer), fp))>0) {
-								n = write(servfd, fileBuffer, strlen(fileBuffer));
-								bzero(fileBuffer, sizeof(fileBuffer));
+								for (int i = 0; i<100000000; i++);
+
+							
+								int rByte = 0;
+								char fileBuffer[256] = { 0 };
+
+								while ((rByte = fread(fileBuffer, 1, sizeof(fileBuffer), fp))>0) {
+									n = write(servfd, fileBuffer, strlen(fileBuffer));
+									bzero(fileBuffer, sizeof(fileBuffer));
+								}
+
+								for (int i = 0; i<100000000; i++);
+
+								char EOFBuffer[] = { EOF };
+								write(servfd, EOFBuffer, sizeof(EOFBuffer));
+								fclose(fp);
+								
+								printf("Send file command end\n");
 							}
-
-							for (int i = 0; i<100000000; i++);
-
-							char EOFBuffer[] = { EOF };
-							write(servfd, EOFBuffer, sizeof(EOFBuffer));
-							fclose(fp);
-							printf("Send file command end\n");
+							else{
+								printf("File not found!\n");
+							}
+						}
+						else if(strncmp(sendBuffer, "/GAME", 5) == 0){
+							//second command
+							int input = 0,record = 0,min = 1,max = 100,times = 0;
+							int answer = (rand()% (max-min+1))+1;
+							printf("\nPlease enter number(1~100) or enter -1 end:");
+							scanf("%d",&input);
+							printf("%d\n",answer);
+							while(input != -1){
+								times++;
+								
+								if(input > answer){
+									if(times == 1)printf("\n1~%d,Please enter number again:",input);
+									else printf("\n%d~%d,Please enter number again:",record,input);
+									scanf("%d",&input);
+								}
+								else if(input < answer){
+									if(times == 1)printf("\n%d~100,Please enter number again:",input);
+									else printf("\n%d~%d,Please enter number again:",record,input);
+									scanf("%d",&input);
+								}
+								else if(input == answer){
+									printf("Answer correct!\n");
+									break;
+								}
+								record = input;
+							}
 						}
 						else {
 							n = write(servfd, sendBuffer, strlen(sendBuffer));
