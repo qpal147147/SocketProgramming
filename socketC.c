@@ -99,29 +99,26 @@ int main(int argc, char *argv[]) {
 						}
 						else if(strncmp(sendBuffer, "/GAME", 5) == 0){
 							//second command
-							int input = 0,record = 0,min = 1,max = 100,times = 0;
-							int answer = (rand()% (max-min+1))+1;
-							printf("\nPlease enter number(1~100) or enter -1 end:");
-							scanf("%d",&input);
-							printf("%d\n",answer);
-							while(input != -1){
-								times++;
-								
-								if(input > answer){
-									if(times == 1)printf("\n1~%d,Please enter number again:",input);
-									else printf("\n%d~%d,Please enter number again:",record,input);
-									scanf("%d",&input);
+							int ans = 0, input = 0, min = 1, max = 100;
+							srand(time(NULL));
+							ans = (rand() % (max - min + 1)) + 1;
+							printf("Play!\n");
+							scanf_s("%d", &input);
+							
+							while (input != -1) {
+								if (input > 100 || input < 1) {
+									printf("Please enter again!\n");
 								}
-								else if(input < answer){
-									if(times == 1)printf("\n%d~100,Please enter number again:",input);
-									else printf("\n%d~%d,Please enter number again:",record,input);
-									scanf("%d",&input);
+								else if (input > ans) {
+									max = input;
+									printf("Range is [%d~%d],Please enter again!\n",min,max);
 								}
-								else if(input == answer){
-									printf("Answer correct!\n");
-									break;
+								else if (input < ans) {
+									min = input;
+									printf("Range is [%d~%d],Please enter again!\n", min, max);
 								}
-								record = input;
+								else printf("Correct!");
+								scanf_s("%d", &input);
 							}
 						}
 						else {
