@@ -97,28 +97,84 @@ int main(int argc, char *argv[]) {
 								printf("File not found!\n");
 							}
 						}
-						else if(strncmp(sendBuffer, "/GAME", 5) == 0){
+						else if(strncmp(sendBuffer, "/GAME ALL", 9) == 0){
 							//second command
+							printf("/GAMEG is guess\n/GAMEM is mora\n");
+						}
+						else if(strncmp(sendBuffer, "/GAMEG", 6) == 0){
+							//third command
 							int ans = 0, input = 0, min = 1, max = 100;
 							srand(time(NULL));
 							ans = (rand() % (max - min + 1)) + 1;
-							printf("Play!\n");
-							scanf_s("%d", &input);
+							printf("Please enter number(1~100):\n");
+
 							
 							while (input != -1) {
-								if (input > 100 || input < 1) {
+								scanf("%d", &input);
+								if ((input > max || input < min) && input != -1) {
 									printf("Please enter again!\n");
 								}
-								else if (input > ans) {
+								else if (input > ans && input != -1) {
 									max = input;
 									printf("Range is [%d~%d],Please enter again!\n",min,max);
 								}
-								else if (input < ans) {
+								else if (input < ans && input != -1) {
 									min = input;
 									printf("Range is [%d~%d],Please enter again!\n", min, max);
 								}
-								else printf("Correct!");
-								scanf_s("%d", &input);
+								else if(input != -1){
+								 printf("Correct!\n");
+								 input = -1;
+								}
+							}
+						}
+						else if(strncmp(sendBuffer, "/GAMEM", 6) == 0){
+							//four command
+							int array[] = {2,0,5};
+							int server = array[rand()%2];
+							int input = 0;
+							printf("Please enter number(0 is fist,2 is scissors,5 is cloth):");
+							
+							while(input != -1){
+								scanf("%d",&input);
+								
+								if(input == 0 || input == 2 || input == 5){
+									if(server != input){
+										if(server == 2){
+											if(input == 0){	
+												printf("You Win!\n");
+											}
+											else if(input == 5){
+												printf("You Lose!\n");
+											}
+										}
+										else if(server == 0){
+											if(input == 2){	
+												printf("You Lose!\n");
+											}
+											else if(input == 5){
+												printf("You Win!\n");
+											}
+										}
+										else if(server == 5){
+											if(input == 2){	
+												printf("You Win!\n");
+											}
+											else if(input == 0){
+												printf("You Lose!\n");
+											}
+										}
+									
+										input = -1;
+									}
+									else if(server == input){
+										printf("Draw!Please enter again:\n");
+										server = array[rand()%2];
+									}
+								}
+								else{
+									printf("Please enter again!\n");
+								}
 							}
 						}
 						else {
