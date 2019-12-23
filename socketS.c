@@ -45,8 +45,8 @@ int main(){
             
 			printf("Server start listening!\n");
             
-            //server main block
-            while(1){
+      //server main block
+      while(1){
 				tmpSet = master;
 				retval = select(fdmax+1,&tmpSet,NULL,NULL,NULL);
             	
@@ -139,6 +139,70 @@ int main(){
 												break;
 											}
 										}
+									}
+									//five command
+									else if(!strncmp(s, "/img", 4)){
+										result = strtok(s," ");//remove /img
+										result = strtok(NULL," ");// /img 1
+										int imgNo = atoi(result);
+										
+										if(imgNo == 1){
+											strcpy(recBuffer,"(っ・Д・)っ");
+										}
+										else if(imgNo == 2){
+											strcpy(recBuffer,"(･ω´･ )");
+										}
+										else if(imgNo == 3){
+											strcpy(recBuffer,"(`・ω・´)");
+										}
+										else if(imgNo == 4){
+											strcpy(recBuffer,",,Ծ‸Ծ,,");
+										}
+										else if(imgNo == 5){
+											strcpy(recBuffer,"(╬ﾟдﾟ)╭∩╮");
+										}
+										else if(imgNo == 6){
+											strcpy(recBuffer,"_(┐「ε:)_");
+										}
+										else if(imgNo == 7){
+											strcpy(recBuffer,"(*´∀`)~♥");
+										}
+										else if(imgNo == 8){
+											strcpy(recBuffer,"(๑•́ ₃ •̀๑)");
+										}
+										else if(imgNo == 9){
+											strcpy(recBuffer,"(ㆆᴗㆆ)");
+										}
+										else if(imgNo == 10){
+											strcpy(recBuffer,"(◞‸◟)");
+										}
+									}
+									//first command
+									else if(strstr(recBuffer,"/FILE [")!=NULL){
+										char *fileName = strchr(recBuffer,'[') + 1;
+										strtok(fileName,"]");
+										
+										printf("recv file command start\n");
+										
+										FILE *fp = fopen(strcat(fileName,"Copy"),"w");
+										int rByte = 0;
+										
+										while((rByte = read(clifd,recBuffer,sizeof(recBuffer)))>0){
+											char EOFBuffer[] = {EOF};
+											
+											if(strncmp(recBuffer,EOFBuffer,1)==0){
+												break;
+											}
+											
+											printf("file:%s\n",recBuffer);
+											fwrite(recBuffer,strlen(recBuffer),1,fp);
+											bzero(recBuffer,sizeof(recBuffer));
+										}
+										fclose(fp);
+										
+										char fileEnd[] = {"File End"};
+										n = write(clifd,fileEnd,strlen(fileEnd));
+										printf("recv file command end\n");
 									}
 									
 									if(isMsg) {
