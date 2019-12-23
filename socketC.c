@@ -69,7 +69,11 @@ int main(int argc, char *argv[]) {
 
 						if (strncmp(sendBuffer, "/FILE", 5) == 0) {
 							//first command
-							FILE *fp = fopen("hello", "r");
+							char *fileName = strchr(sendBuffer,'[') + 1;
+							strtok(fileName,"]");
+							
+							FILE *fp = fopen(fileName, "r");
+							
 							if(fp != NULL){
 								printf("Send file command start\n");
 								n = write(servfd, sendBuffer, strlen(sendBuffer));
@@ -99,7 +103,7 @@ int main(int argc, char *argv[]) {
 						}
 						else if(strncmp(sendBuffer, "/GAME ALL", 9) == 0){
 							//second command
-							printf("/GAMEG is guess\n/GAMEM is mora\n");
+							printf("[/GAMEG] is guess\n[/GAMEM] is mora\n");
 						}
 						else if(strncmp(sendBuffer, "/GAMEG", 6) == 0){
 							//third command
@@ -176,6 +180,19 @@ int main(int argc, char *argv[]) {
 									printf("Please enter again!\n");
 								}
 							}
+						}
+						//five command
+						else if(strncmp(sendBuffer, "/img all", 7) == 0){
+							printf("%s\n","[/img 1] is (っ・Д・)っ");
+							printf("%s\n","[/img 2] is (･ω´･ )");
+							printf("%s\n","[/img 3] is (`・ω・´)");
+							printf("%s\n","[/img 4] is ,,Ծ‸Ծ,,");
+							printf("%s\n","[/img 5] is (╬ﾟдﾟ)╭∩╮");
+							printf("%s\n","[/img 6] is _(┐「ε:)_");
+							printf("%s\n","[/img 7] is (*´∀`)~♥");
+							printf("%s\n","[/img 8] is (๑•́ ₃ •̀๑)");
+							printf("%s\n","[/img 9] is (ㆆᴗㆆ)");
+							printf("%s\n","[/img 10] is (◞‸◟)");
 						}
 						else {
 							n = write(servfd, sendBuffer, strlen(sendBuffer));
