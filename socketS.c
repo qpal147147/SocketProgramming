@@ -35,7 +35,7 @@ int main(){
 
 	if(servfd >= 0){
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");//Multiplayer 10.0.0.1
+	serv_addr.sin_addr.s_addr = inet_addr("10.0.0.1");//Multiplayer 10.0.0.1
 	serv_addr.sin_port = htons(portNo);
 
 		if(bind(servfd,(struct sockaddr*)&serv_addr,sizeof(serv_addr)) >= 0){
@@ -141,10 +141,11 @@ int main(){
 										}
 									}
 									//five command
-									else if(!strncmp(s, "/img", 4)){
-										result = strtok(s," ");//remove /img
-										result = strtok(NULL," ");// /img 1
-										int imgNo = atoi(result);
+									else if(!strncmp(s, "/IMG", 3)){
+										char *img = NULL;
+										img = strtok(s," ");//remove /img
+										img = strtok(NULL," ");// /img 1
+										int imgNo = atoi(img);
 										
 										if(imgNo == 1){
 											strcpy(recBuffer,"(っ・Д・)っ");
@@ -178,7 +179,7 @@ int main(){
 										}
 									}
 									//first command
-									else if(strstr(recBuffer,"/FILE [")!=NULL){
+									else if(strstr(recBuffer,"/FILE")!=NULL){
 										char *fileName = strchr(recBuffer,'[') + 1;
 										strtok(fileName,"]");
 										
@@ -195,7 +196,7 @@ int main(){
 											}
 											
 											printf("file:%s\n",recBuffer);
-											fwrite(recBuffer,strlen(recBuffer),1,fp);
+											fwrite(recBuffer,1,sizeof(recBuffer),fp);
 											bzero(recBuffer,sizeof(recBuffer));
 										}
 										fclose(fp);
@@ -203,6 +204,30 @@ int main(){
 										char fileEnd[] = {"File End"};
 										n = write(clifd,fileEnd,strlen(fileEnd));
 										printf("recv file command end\n");
+									}
+									
+									//six command
+									else if(strstr(recBuffer,"/DFILE")!=NULL){
+										char *fileName = strchr(recBuffer,'[') + 1;
+										strtok(fileName,"]");
+										
+										FILE *fp = fopen(fileName, "r");
+										if(fp != NULL){
+											printf("Rec file command start\n");
+											
+											for (int i = 0; i<100000000; i++);
+											
+											int rByte = 0;
+											char fileBuffer[256] = { 0 };
+											
+											while ((rByte = fread(fileBuffer, 1, sizeof(fileBuffer), fp))>0) {
+												n = write(clifd, fileBuffer, strlen(fileBuffer));
+												bzero(fileBuffer, sizeof(fileBuffer));
+											}
+											
+											for (int i = 0; i<100000000; i++);
+											fclose(fp);
+										}
 									}
 									
 									if(isMsg) {
