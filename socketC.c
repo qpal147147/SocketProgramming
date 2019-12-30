@@ -182,17 +182,23 @@ int main(int argc, char *argv[]) {
 							}
 						}
 						//five command
-						else if(strncmp(sendBuffer, "/img all", 7) == 0){
-							printf("%s\n","[/img 1] is (っ・Д・)っ");
-							printf("%s\n","[/img 2] is (･ω´･ )");
-							printf("%s\n","[/img 3] is (`・ω・´)");
-							printf("%s\n","[/img 4] is ,,Ծ‸Ծ,,");
-							printf("%s\n","[/img 5] is (╬ﾟдﾟ)╭∩╮");
-							printf("%s\n","[/img 6] is _(┐「ε:)_");
-							printf("%s\n","[/img 7] is (*´∀`)~♥");
-							printf("%s\n","[/img 8] is (๑•́ ₃ •̀๑)");
-							printf("%s\n","[/img 9] is (ㆆᴗㆆ)");
-							printf("%s\n","[/img 10] is (◞‸◟)");
+						else if(strncmp(sendBuffer, "/IMG ALL", 7) == 0){
+							printf("%s\n","[/IMG 1] is (っ・Д・)っ");
+							printf("%s\n","[/IMG 2] is (･ω´･ )");
+							printf("%s\n","[/IMG 3] is (`・ω・´)");
+							printf("%s\n","[/IMG 4] is ,,Ծ‸Ծ,,");
+							printf("%s\n","[/IMG 5] is (╬ﾟдﾟ)╭∩╮");
+							printf("%s\n","[/IMG 6] is _(┐「ε:)_");
+							printf("%s\n","[/IMG 7] is (*´∀`)~♥");
+							printf("%s\n","[/IMG 8] is (๑•́ ₃ •̀๑)");
+							printf("%s\n","[/IMG 9] is (ㆆᴗㆆ)");
+							printf("%s\n","[/IMG 10] is (◞‸◟)");
+						}
+						//six command
+						else if(strncmp(sendBuffer, "/help", 5) == 0){
+							printf("%s\n","/FILE [fileName] : upload file");
+							printf("%s\n","/GAME ALL : show all game");
+							printf("%s\n","/IMG ALL : show all img");
 						}
 						else {
 							n = write(servfd, sendBuffer, strlen(sendBuffer));
