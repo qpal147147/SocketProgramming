@@ -29,10 +29,43 @@ Number|Command|Description
 
 Number|Command|Description
 ---|:--:|---:
-1 | ```/GAMEG``` | Play guess the number with the server
-2 | ```/GAMEM``` | Play finger-guessing with the server
+1 | ```/GAMEG``` | Play guess the number with the computer
+2 | ```/GAMEM``` | Play finger-guessing with the computer
 
 <hr>
 
 # How to use
-+ ### Multiple connect
+### 1. Connect
+```c
+serv_addr.sin_addr.s_addr = inet_addr("10.0.0.1");
+```
+Multiple connect： ```10.0.0.1```  
+Local connect： ```10.0.0.1``` change to ```127.0.0.1```
+  
+### 2. Compile
+Open terminal,enter command：
+```c
+gcc socketC.c -o socketC
+gcc socketS.c -o socketS
+```
+or
+```c
+./ MakeFile
+```
+  
+### 3. Run
+First,strat server：
+```c
+./ socketS
+```
+Next,run client：
+```c
+./ socketC
+```
+  
+### 4. Command
+Enter your command
+
+<hr>
+
+I am a program newbie,first time learn socket,study hard every day!
